@@ -1,0 +1,20 @@
+name: SistemaClases
+version: '1.0.0'
+main: com.miplugin.clases.ClasesPlugin
+api-version: '1.21'
+author: DARKMORTOL
+description: Sistema de clases RPG liviano con habilidades activas y pasivas vía Attribute API
+
+commands:
+  clase:
+    description: Elige tu clase y usa sus habilidades
+    aliases: [clases, class]
+    usage: /clase <elegir|info|reset|estrella>
+
+permissions:
+  clases.usar:
+    description: Permite elegir clase y ver info
+    default: true
+  clases.admin:
+    description: Permite resetear la clase de otro jugador y dar estrellas
+    default: op
