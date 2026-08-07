@@ -15,6 +15,10 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        plugin.getClaseManager().reaplicarAlEntrar(event.getPlayer());
+        var player = event.getPlayer();
+        plugin.getClaseManager().reaplicarAlEntrar(player);
+
+        var clase = plugin.getClaseManager().getDatos(player.getUniqueId()).getClase();
+        plugin.getArmorMitigationService().actualizar(player, clase);
     }
 }

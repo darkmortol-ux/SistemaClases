@@ -1,2 +1,37 @@
 # SistemaClases - configuración
 precio-estrella-cambio: 500000
+
+armor-durability:
+  nivel-irrompibilidad: 3   # 1 a 8; nivel vanilla máximo normal es 3, aquí se puede subir
+
+armor-names:
+  guerrero:
+    casco: "Casco del Guerrero"
+    pechera: "Pechera del Guerrero"
+    pantalones: "Pantalones del Guerrero"
+    botas: "Botas del Guerrero"
+  mago:
+    casco: "Casco del Mago"
+    pechera: "Túnica del Mago"
+    pantalones: "Pantalones del Mago"
+    botas: "Botas del Mago"
+  tanque:
+    casco: "Casco del Tanque"
+    pechera: "Coraza del Tanque"
+    pantalones: "Grebas del Tanque"
+    botas: "Botas del Tanque"
+  arquero:
+    casco: "Capucha del Arquero"
+    pechera: "Pechera del Arquero"
+    pantalones: "Pantalones del Arquero"
+    botas: "Botas del Arquero"
+  asesino:
+    casco: "Capucha del Asesino"
+    pechera: "Pechera del Asesino"
+    pantalones: "Pantalones del Asesino"
+    botas: "Botas del Asesino"
+  clerigo:
+    casco: "Mitra del Clérigo"
+    pechera: "Túnica del Clérigo"
+    pantalones: "Pantalones del Clérigo"
+    botas: "Sandalias del Clérigo"
