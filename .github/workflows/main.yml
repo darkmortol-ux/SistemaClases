@@ -31,9 +31,17 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: SistemaClases-jar
-          path: target/*.jar
+          path: |
+            target/*.jar
+            !target/original-*.jar
 
-      - name: Publicar/actualizar Release con el .jar
+      - name: Borrar la release "latest" anterior (si existe) para empezar limpio
+        if: github.event_name == 'push'
+        run: gh release delete latest --yes --cleanup-tag || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publicar Release con el .jar
         if: github.event_name == 'push'
         uses: softprops/action-gh-release@v2
         with:
@@ -42,7 +50,9 @@ jobs:
           body: |
             Compilación automática más reciente del plugin SistemaClases.
             Generada desde el commit ${{ github.sha }}.
-          files: target/*.jar
+          files: |
+            target/*.jar
+            !target/original-*.jar
           make_latest: true
           prerelease: false
         env:
