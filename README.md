@@ -210,3 +210,5 @@ armor-names:                     # nombres personalizables por clase y pieza
   esencias de clase simplemente no aparecen en el loot de esos eventos; todo lo demás
   (clases, habilidades, crafteo manual si le das las esencias por comando, armadura) funciona
   igual. La integración es vía reflexión, no requiere el `.jar` en tiempo de compilación.
+
+https://github.com/darkmortol-ux/EventosPersonalizados
