@@ -212,3 +212,11 @@ armor-names:                     # nombres personalizables por clase y pieza
   igual. La integración es vía reflexión, no requiere el `.jar` en tiempo de compilación.
 
 https://github.com/darkmortol-ux/EventosPersonalizados
+
+
+---
+Mis Plugins
+
+https://github.com/darkmortol-ux/RangosMC
+https://github.com/darkmortol-ux/BordePersonalizado
+https://github.com/darkmortol-ux/ProteccionAreas
