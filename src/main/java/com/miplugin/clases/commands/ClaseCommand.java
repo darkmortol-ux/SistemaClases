@@ -46,6 +46,7 @@ public class ClaseCommand implements CommandExecutor, TabCompleter {
             case "info" -> handleInfo(player);
             case "reset" -> handleReset(player, args);
             case "estrella" -> handleEstrella(player, args);
+            case "esencia" -> handleEsencia(player, args);
             default -> enviarAyuda(player);
         }
         return true;
@@ -177,6 +178,64 @@ public class ClaseCommand implements CommandExecutor, TabCompleter {
         objetivo.sendMessage(ChatColor.LIGHT_PURPLE + "Recibiste " + cantidad + " ★ Estrella(s) del Cambio.");
     }
 
+    private void handleEsencia(Player sender, String[] args) {
+        if (!sender.hasPermission("clases.admin")) {
+            sender.sendMessage(ChatColor.RED + "No tienes permiso para usar esto.");
+            return;
+        }
+        if (args.length < 3 || !args[1].equalsIgnoreCase("dar")) {
+            sender.sendMessage(ChatColor.RED + "Uso: /clase esencia dar <jugador> <" + nombresClases() + "|aleatoria> [cantidad]");
+            return;
+        }
+
+        Player objetivo = sender.getServer().getPlayer(args[2]);
+        if (objetivo == null) {
+            sender.sendMessage(ChatColor.RED + "Ese jugador no está conectado.");
+            return;
+        }
+
+        if (args.length < 4) {
+            sender.sendMessage(ChatColor.RED + "Uso: /clase esencia dar <jugador> <" + nombresClases() + "|aleatoria> [cantidad]");
+            return;
+        }
+
+        int cantidad = 1;
+        if (args.length >= 5) {
+            try {
+                cantidad = Math.max(1, Integer.parseInt(args[4]));
+            } catch (NumberFormatException ignored) {}
+        }
+
+        ItemStack esencia;
+        String etiqueta;
+
+        if (args[3].equalsIgnoreCase("aleatoria")) {
+            esencia = plugin.getEsenciaService().crearAleatoria();
+            etiqueta = "aleatoria";
+        } else {
+            ClaseDefinicion clase;
+            try {
+                clase = ClaseDefinicion.valueOf(args[3].toUpperCase());
+            } catch (IllegalArgumentException e) {
+                sender.sendMessage(ChatColor.RED + "Clase inválida. Opciones: " + nombresClases() + "|aleatoria");
+                return;
+            }
+            esencia = plugin.getEsenciaService().crear(clase);
+            etiqueta = clase.getNombreDisplay();
+        }
+
+        esencia.setAmount(cantidad);
+
+        var leftover = objetivo.getInventory().addItem(esencia);
+        if (!leftover.isEmpty()) {
+            leftover.values().forEach(item ->
+                    objetivo.getWorld().dropItemNaturally(objetivo.getLocation(), item));
+        }
+
+        sender.sendMessage(ChatColor.GREEN + "Le diste " + cantidad + " esencia(s) de " + etiqueta + " a " + objetivo.getName() + ".");
+        objetivo.sendMessage(ChatColor.LIGHT_PURPLE + "Recibiste " + cantidad + " esencia(s) de " + etiqueta + ".");
+    }
+
     private void enviarAyuda(Player player) {
         player.sendMessage(ChatColor.YELLOW + "/clase elegir <clase>" + ChatColor.WHITE + " - Elige o cambia de clase");
         player.sendMessage(ChatColor.YELLOW + "/clase info" + ChatColor.WHITE + " - Ver tu clase y cooldown actual");
@@ -191,7 +250,7 @@ public class ClaseCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return List.of("elegir", "info", "reset", "estrella").stream()
+            return List.of("elegir", "info", "reset", "estrella", "esencia").stream()
                     .filter(s -> s.startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
         }
@@ -199,6 +258,15 @@ public class ClaseCommand implements CommandExecutor, TabCompleter {
             return Arrays.stream(ClaseDefinicion.values())
                     .map(c -> c.name().toLowerCase())
                     .filter(s -> s.startsWith(args[1].toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+        if (args.length == 4 && args[0].equalsIgnoreCase("esencia") && args[1].equalsIgnoreCase("dar")) {
+            List<String> opciones = new ArrayList<>(Arrays.stream(ClaseDefinicion.values())
+                    .map(c -> c.name().toLowerCase())
+                    .toList());
+            opciones.add("aleatoria");
+            return opciones.stream()
+                    .filter(s -> s.startsWith(args[3].toLowerCase()))
                     .collect(Collectors.toList());
         }
         return new ArrayList<>();
