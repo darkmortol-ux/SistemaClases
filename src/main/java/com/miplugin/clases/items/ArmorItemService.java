@@ -50,7 +50,7 @@ public class ArmorItemService {
             meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS, org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
         } else {
             meta.setDisplayName("§7" + nombrePieza(clase, slot) + " (Sin Terminar)");
-            meta.setLore(java.util.List.of("§7Llévala a una mesa de herrería", "§7junto a 2 esencias para completarla."));
+            meta.setLore(java.util.List.of("§7Llévala a una mesa de herrería", "§7junto al Lingote Especial de tu clase."));
         }
 
         meta.getPersistentDataContainer().set(claseKey, PersistentDataType.STRING, clase.name());

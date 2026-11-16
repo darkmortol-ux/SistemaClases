@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.SmithingTransformRecipe;
 
 public class ArmorRecipeRegistrar {
 
@@ -24,6 +25,9 @@ public class ArmorRecipeRegistrar {
             registrarBotas(clase);
             registrarPechera(clase);
             registrarPantalones(clase);
+            registrarLingote(clase);
+            registrarHerreria(clase, ArmorSlot.PECHERA);
+            registrarHerreria(clase, ArmorSlot.PANTALONES);
         }
     }
 
@@ -78,6 +82,29 @@ public class ArmorRecipeRegistrar {
         receta.shape("LRL", "LLL", " R ");
         receta.setIngredient('L', cuero());
         receta.setIngredient('R', relleno(clase));
+        plugin.getServer().addRecipe(receta);
+    }
+
+    /** Lingote especial: 1 lingote de netherite al centro, rodeado por 8 esencias de la clase. */
+    private void registrarLingote(ClaseDefinicion clase) {
+        var key = new NamespacedKey(plugin, "lingote_" + clase.name().toLowerCase());
+        ShapedRecipe receta = new ShapedRecipe(key, plugin.getLingoteService().crear(clase));
+        receta.shape("EEE", "ENE", "EEE");
+        receta.setIngredient('E', esencia(clase));
+        receta.setIngredient('N', new RecipeChoice.MaterialChoice(Material.NETHERITE_INGOT));
+        plugin.getServer().addRecipe(receta);
+    }
+
+    /** Mesa de herrería: pieza sin terminar + lingote especial de la misma clase = pieza final. Sin plantilla. */
+    private void registrarHerreria(ClaseDefinicion clase, ArmorSlot slot) {
+        var key = new NamespacedKey(plugin, slot.name().toLowerCase() + "_herreria_" + clase.name().toLowerCase());
+        var resultado = plugin.getArmorItemService().crear(clase, slot, ArmorItemService.Estado.FINAL);
+        var base = new RecipeChoice.ExactChoice(
+                plugin.getArmorItemService().crear(clase, slot, ArmorItemService.Estado.BASE));
+        var adicion = new RecipeChoice.ExactChoice(plugin.getLingoteService().crear(clase));
+
+        SmithingTransformRecipe receta = new SmithingTransformRecipe(
+                key, resultado, RecipeChoice.empty(), base, adicion, false);
         plugin.getServer().addRecipe(receta);
     }
 }
