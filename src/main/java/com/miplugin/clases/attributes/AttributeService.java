@@ -18,6 +18,7 @@ public class AttributeService {
         this.plugin = plugin;
     }
 
+    /** Quita TODOS los modificadores de clase (de cualquier clase) que este plugin haya aplicado. */
     public void limpiarModificadores(Player player) {
         for (ClaseDefinicion clase : ClaseDefinicion.values()) {
             for (Attribute attribute : clase.getModificadores().keySet()) {
@@ -33,7 +34,15 @@ public class AttributeService {
         }
     }
 
+    /**
+     * Aplica los modificadores de la clase dada.
+     * Es seguro llamarlo varias veces: primero limpia cualquier modificador previo,
+     * porque Minecraft guarda los modificadores permanentes en los datos del jugador
+     * y siguen ahí cuando se desconecta y vuelve a entrar.
+     */
     public void aplicarModificadores(Player player, ClaseDefinicion clase) {
+        limpiarModificadores(player);
+
         for (Map.Entry<Attribute, Double> entry : clase.getModificadores().entrySet()) {
             Attribute attribute = entry.getKey();
             double valor = entry.getValue();
