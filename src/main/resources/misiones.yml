@@ -1,0 +1,74 @@
+# Aldeano de las Esencias - configuración de misiones
+# Tras editar este archivo usa:  /clase mision recargar
+
+# Horas que debe esperar un jugador entre una misión y la siguiente
+# (el cooldown empieza al completar o abandonar la misión)
+cooldown-horas: 12
+
+# Probabilidad (0.0 a 1.0) de recibir esencias al completar una misión.
+# 0.40 = 40% de dar esencias, 60% de no dar ninguna.
+probabilidad-esencia: 0.40
+
+# Si salen esencias, cuántas (cada una es de una clase aleatoria entre las 6)
+esencias-min: 1
+esencias-max: 2
+
+# Tipos de misión:
+#   KILL     -> objetivo = nombre del mob (EntityType), ej. ZOMBIE
+#   MINE     -> objetivo = bloque (Material). DIAMOND_ORE también cuenta DEEPSLATE_DIAMOND_ORE
+#   ENTREGAR -> objetivo = ítem (Material) que se le entrega al aldeano (solo ítems normales, sin nombre ni encantamientos)
+# Dificultad: DIFICIL o EXTREMA
+misiones:
+  # ---------------- DIFÍCILES (30) ----------------
+  - { id: 1,  dificultad: DIFICIL, tipo: KILL, objetivo: ZOMBIE, cantidad: 150 }
+  - { id: 2,  dificultad: DIFICIL, tipo: KILL, objetivo: SKELETON, cantidad: 120 }
+  - { id: 3,  dificultad: DIFICIL, tipo: KILL, objetivo: CREEPER, cantidad: 80 }
+  - { id: 4,  dificultad: DIFICIL, tipo: KILL, objetivo: SPIDER, cantidad: 100 }
+  - { id: 5,  dificultad: DIFICIL, tipo: KILL, objetivo: ENDERMAN, cantidad: 40 }
+  - { id: 6,  dificultad: DIFICIL, tipo: KILL, objetivo: WITCH, cantidad: 15 }
+  - { id: 7,  dificultad: DIFICIL, tipo: KILL, objetivo: BLAZE, cantidad: 50 }
+  - { id: 8,  dificultad: DIFICIL, tipo: KILL, objetivo: ZOMBIFIED_PIGLIN, cantidad: 80 }
+  - { id: 9,  dificultad: DIFICIL, tipo: KILL, objetivo: MAGMA_CUBE, cantidad: 40 }
+  - { id: 10, dificultad: DIFICIL, tipo: KILL, objetivo: DROWNED, cantidad: 60 }
+  - { id: 11, dificultad: DIFICIL, tipo: KILL, objetivo: PHANTOM, cantidad: 25 }
+  - { id: 12, dificultad: DIFICIL, tipo: KILL, objetivo: PILLAGER, cantidad: 30 }
+  - { id: 13, dificultad: DIFICIL, tipo: KILL, objetivo: HUSK, cantidad: 80 }
+  - { id: 14, dificultad: DIFICIL, tipo: KILL, objetivo: STRAY, cantidad: 60 }
+  - { id: 15, dificultad: DIFICIL, tipo: KILL, objetivo: GUARDIAN, cantidad: 25 }
+  - { id: 16, dificultad: DIFICIL, tipo: MINE, objetivo: DIAMOND_ORE, cantidad: 40 }
+  - { id: 17, dificultad: DIFICIL, tipo: MINE, objetivo: EMERALD_ORE, cantidad: 15 }
+  - { id: 18, dificultad: DIFICIL, tipo: MINE, objetivo: GOLD_ORE, cantidad: 100 }
+  - { id: 19, dificultad: DIFICIL, tipo: MINE, objetivo: REDSTONE_ORE, cantidad: 120 }
+  - { id: 20, dificultad: DIFICIL, tipo: MINE, objetivo: LAPIS_ORE, cantidad: 80 }
+  - { id: 21, dificultad: DIFICIL, tipo: MINE, objetivo: NETHER_QUARTZ_ORE, cantidad: 150 }
+  - { id: 22, dificultad: DIFICIL, tipo: MINE, objetivo: COAL_ORE, cantidad: 300 }
+  - { id: 23, dificultad: DIFICIL, tipo: ENTREGAR, objetivo: DIAMOND, cantidad: 32 }
+  - { id: 24, dificultad: DIFICIL, tipo: ENTREGAR, objetivo: BLAZE_ROD, cantidad: 32 }
+  - { id: 25, dificultad: DIFICIL, tipo: ENTREGAR, objetivo: ENDER_PEARL, cantidad: 24 }
+  - { id: 26, dificultad: DIFICIL, tipo: ENTREGAR, objetivo: GHAST_TEAR, cantidad: 6 }
+  - { id: 27, dificultad: DIFICIL, tipo: ENTREGAR, objetivo: PHANTOM_MEMBRANE, cantidad: 20 }
+  - { id: 28, dificultad: DIFICIL, tipo: ENTREGAR, objetivo: NAUTILUS_SHELL, cantidad: 2 }
+  - { id: 29, dificultad: DIFICIL, tipo: ENTREGAR, objetivo: GOLDEN_APPLE, cantidad: 16 }
+  - { id: 30, dificultad: DIFICIL, tipo: ENTREGAR, objetivo: EXPERIENCE_BOTTLE, cantidad: 64 }
+
+  # ---------------- EXTREMAS (20) ----------------
+  - { id: 31, dificultad: EXTREMA, tipo: KILL, objetivo: WITHER_SKELETON, cantidad: 60 }
+  - { id: 32, dificultad: EXTREMA, tipo: KILL, objetivo: GHAST, cantidad: 25 }
+  - { id: 33, dificultad: EXTREMA, tipo: KILL, objetivo: PIGLIN_BRUTE, cantidad: 15 }
+  - { id: 34, dificultad: EXTREMA, tipo: KILL, objetivo: SHULKER, cantidad: 20 }
+  - { id: 35, dificultad: EXTREMA, tipo: KILL, objetivo: EVOKER, cantidad: 12 }
+  - { id: 36, dificultad: EXTREMA, tipo: KILL, objetivo: RAVAGER, cantidad: 8 }
+  - { id: 37, dificultad: EXTREMA, tipo: KILL, objetivo: ELDER_GUARDIAN, cantidad: 3 }
+  - { id: 38, dificultad: EXTREMA, tipo: KILL, objetivo: VINDICATOR, cantidad: 40 }
+  - { id: 39, dificultad: EXTREMA, tipo: KILL, objetivo: BREEZE, cantidad: 30 }
+  - { id: 40, dificultad: EXTREMA, tipo: KILL, objetivo: WARDEN, cantidad: 1 }
+  - { id: 41, dificultad: EXTREMA, tipo: KILL, objetivo: WITHER, cantidad: 1 }
+  - { id: 42, dificultad: EXTREMA, tipo: MINE, objetivo: ANCIENT_DEBRIS, cantidad: 24 }
+  - { id: 43, dificultad: EXTREMA, tipo: MINE, objetivo: DIAMOND_ORE, cantidad: 128 }
+  - { id: 44, dificultad: EXTREMA, tipo: MINE, objetivo: EMERALD_ORE, cantidad: 40 }
+  - { id: 45, dificultad: EXTREMA, tipo: ENTREGAR, objetivo: NETHERITE_SCRAP, cantidad: 12 }
+  - { id: 46, dificultad: EXTREMA, tipo: ENTREGAR, objetivo: SHULKER_SHELL, cantidad: 12 }
+  - { id: 47, dificultad: EXTREMA, tipo: ENTREGAR, objetivo: NETHER_STAR, cantidad: 2 }
+  - { id: 48, dificultad: EXTREMA, tipo: ENTREGAR, objetivo: TOTEM_OF_UNDYING, cantidad: 3 }
+  - { id: 49, dificultad: EXTREMA, tipo: ENTREGAR, objetivo: ENCHANTED_GOLDEN_APPLE, cantidad: 2 }
+  - { id: 50, dificultad: EXTREMA, tipo: ENTREGAR, objetivo: ECHO_SHARD, cantidad: 8 }

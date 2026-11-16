@@ -1,9 +1,11 @@
 package com.miplugin.clases.commands;
 
 import com.miplugin.clases.ClasesPlugin;
+import com.miplugin.clases.missions.Mission;
 import com.miplugin.clases.model.ClaseDefinicion;
 import com.miplugin.clases.model.PlayerClaseData;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -47,10 +49,14 @@ public class ClaseCommand implements CommandExecutor, TabCompleter {
             case "reset" -> handleReset(player, args);
             case "estrella" -> handleEstrella(player, args);
             case "esencia" -> handleEsencia(player, args);
+            case "aldeano" -> handleAldeano(player, args);
+            case "mision" -> handleMision(player, args);
             default -> enviarAyuda(player);
         }
         return true;
     }
+
+    // ------------------------------------------------------------------ clases
 
     private void handleElegir(Player player, String[] args) {
         if (args.length < 2) {
@@ -142,6 +148,8 @@ public class ClaseCommand implements CommandExecutor, TabCompleter {
         player.sendMessage(ChatColor.GREEN + "Clase de " + objetivo.getName() + " reseteada.");
     }
 
+    // ------------------------------------------------------------------ objetos (admin)
+
     private void handleEstrella(Player sender, String[] args) {
         if (!sender.hasPermission("clases.admin")) {
             sender.sendMessage(ChatColor.RED + "No tienes permiso para usar esto.");
@@ -183,7 +191,7 @@ public class ClaseCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(ChatColor.RED + "No tienes permiso para usar esto.");
             return;
         }
-        if (args.length < 3 || !args[1].equalsIgnoreCase("dar")) {
+        if (args.length < 4 || !args[1].equalsIgnoreCase("dar")) {
             sender.sendMessage(ChatColor.RED + "Uso: /clase esencia dar <jugador> <" + nombresClases() + "|aleatoria> [cantidad]");
             return;
         }
@@ -191,11 +199,6 @@ public class ClaseCommand implements CommandExecutor, TabCompleter {
         Player objetivo = sender.getServer().getPlayer(args[2]);
         if (objetivo == null) {
             sender.sendMessage(ChatColor.RED + "Ese jugador no está conectado.");
-            return;
-        }
-
-        if (args.length < 4) {
-            sender.sendMessage(ChatColor.RED + "Uso: /clase esencia dar <jugador> <" + nombresClases() + "|aleatoria> [cantidad]");
             return;
         }
 
@@ -236,9 +239,103 @@ public class ClaseCommand implements CommandExecutor, TabCompleter {
         objetivo.sendMessage(ChatColor.LIGHT_PURPLE + "Recibiste " + cantidad + " esencia(s) de " + etiqueta + ".");
     }
 
+    // ------------------------------------------------------------------ aldeano de misiones
+
+    private void handleAldeano(Player player, String[] args) {
+        if (!player.hasPermission("clases.admin")) {
+            player.sendMessage(ChatColor.RED + "No tienes permiso para usar esto.");
+            return;
+        }
+        if (args.length < 2) {
+            player.sendMessage(ChatColor.RED + "Uso: /clase aldeano <colocar|quitar>");
+            return;
+        }
+
+        switch (args[1].toLowerCase()) {
+            case "colocar" -> {
+                Location ubicacion = player.getLocation();
+                ubicacion.setYaw(ubicacion.getYaw() + 180f); // mira hacia ti
+                ubicacion.setPitch(0f);
+                plugin.getAldeanoService().crear(ubicacion);
+                player.sendMessage(ChatColor.GREEN + "Aldeano de las Esencias colocado en tu posición.");
+            }
+            case "quitar" -> {
+                if (plugin.getAldeanoService().quitarCercano(player.getLocation(), 10)) {
+                    player.sendMessage(ChatColor.GREEN + "Aldeano eliminado.");
+                } else {
+                    player.sendMessage(ChatColor.RED + "No hay ningún Aldeano de las Esencias a menos de 10 bloques.");
+                }
+            }
+            default -> player.sendMessage(ChatColor.RED + "Uso: /clase aldeano <colocar|quitar>");
+        }
+    }
+
+    private void handleMision(Player player, String[] args) {
+        String sub = args.length >= 2 ? args[1].toLowerCase() : "info";
+
+        switch (sub) {
+            case "info" -> handleMisionInfo(player);
+            case "abandonar" -> {
+                if (plugin.getMissionManager().abandonar(player)) {
+                    player.sendMessage(ChatColor.YELLOW + "Abandonaste tu misión. El cooldown para pedir otra ya está corriendo.");
+                } else {
+                    player.sendMessage(ChatColor.RED + "No tienes una misión activa.");
+                }
+            }
+            case "reiniciar" -> {
+                if (!player.hasPermission("clases.admin")) {
+                    player.sendMessage(ChatColor.RED + "No tienes permiso para usar esto.");
+                    return;
+                }
+                if (args.length < 3) {
+                    player.sendMessage(ChatColor.RED + "Uso: /clase mision reiniciar <jugador>");
+                    return;
+                }
+                Player objetivo = player.getServer().getPlayer(args[2]);
+                if (objetivo == null) {
+                    player.sendMessage(ChatColor.RED + "Ese jugador no está conectado.");
+                    return;
+                }
+                plugin.getMissionManager().reiniciar(objetivo.getUniqueId());
+                player.sendMessage(ChatColor.GREEN + "Misión y cooldown de " + objetivo.getName() + " reiniciados.");
+            }
+            case "recargar" -> {
+                if (!player.hasPermission("clases.admin")) {
+                    player.sendMessage(ChatColor.RED + "No tienes permiso para usar esto.");
+                    return;
+                }
+                plugin.getMissionManager().cargarConfig();
+                player.sendMessage(ChatColor.GREEN + "misiones.yml recargado.");
+            }
+            default -> player.sendMessage(ChatColor.RED + "Uso: /clase mision [info|abandonar|reiniciar <jugador>|recargar]");
+        }
+    }
+
+    private void handleMisionInfo(Player player) {
+        var manager = plugin.getMissionManager();
+        var data = manager.getDatos(player.getUniqueId());
+        Mission mision = manager.getMisionActiva(player.getUniqueId());
+
+        if (mision != null) {
+            player.sendMessage(ChatColor.AQUA + "Misión activa: " + ChatColor.WHITE + mision.descripcion());
+            if (mision.tipo() == Mission.Tipo.ENTREGAR) {
+                player.sendMessage(ChatColor.GRAY + "Llévalo al Aldeano de las Esencias.");
+            } else {
+                player.sendMessage(ChatColor.GRAY + "Progreso: " + data.getProgreso() + "/" + mision.cantidad());
+            }
+        } else if (data.enCooldown()) {
+            player.sendMessage(ChatColor.YELLOW + "Podrás pedir otra misión en " + manager.formatearTiempo(data.segundosRestantes()) + ".");
+        } else {
+            player.sendMessage(ChatColor.GREEN + "Puedes pedir una misión al Aldeano de las Esencias.");
+        }
+    }
+
+    // ------------------------------------------------------------------ ayuda y autocompletado
+
     private void enviarAyuda(Player player) {
         player.sendMessage(ChatColor.YELLOW + "/clase elegir <clase>" + ChatColor.WHITE + " - Elige o cambia de clase");
         player.sendMessage(ChatColor.YELLOW + "/clase info" + ChatColor.WHITE + " - Ver tu clase y cooldown actual");
+        player.sendMessage(ChatColor.YELLOW + "/clase mision" + ChatColor.WHITE + " - Ver tu misión del aldeano");
     }
 
     private String nombresClases() {
@@ -250,25 +347,34 @@ public class ClaseCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return List.of("elegir", "info", "reset", "estrella", "esencia").stream()
-                    .filter(s -> s.startsWith(args[0].toLowerCase()))
-                    .collect(Collectors.toList());
+            return filtrar(List.of("elegir", "info", "mision", "reset", "estrella", "esencia", "aldeano"), args[0]);
         }
         if (args.length == 2 && args[0].equalsIgnoreCase("elegir")) {
-            return Arrays.stream(ClaseDefinicion.values())
-                    .map(c -> c.name().toLowerCase())
-                    .filter(s -> s.startsWith(args[1].toLowerCase()))
-                    .collect(Collectors.toList());
+            return filtrar(nombresClasesLista(), args[1]);
+        }
+        if (args.length == 2 && args[0].equalsIgnoreCase("aldeano")) {
+            return filtrar(List.of("colocar", "quitar"), args[1]);
+        }
+        if (args.length == 2 && args[0].equalsIgnoreCase("mision")) {
+            return filtrar(List.of("info", "abandonar", "reiniciar", "recargar"), args[1]);
         }
         if (args.length == 4 && args[0].equalsIgnoreCase("esencia") && args[1].equalsIgnoreCase("dar")) {
-            List<String> opciones = new ArrayList<>(Arrays.stream(ClaseDefinicion.values())
-                    .map(c -> c.name().toLowerCase())
-                    .toList());
+            List<String> opciones = new ArrayList<>(nombresClasesLista());
             opciones.add("aleatoria");
-            return opciones.stream()
-                    .filter(s -> s.startsWith(args[3].toLowerCase()))
-                    .collect(Collectors.toList());
+            return filtrar(opciones, args[3]);
         }
         return new ArrayList<>();
+    }
+
+    private List<String> nombresClasesLista() {
+        return Arrays.stream(ClaseDefinicion.values())
+                .map(c -> c.name().toLowerCase())
+                .collect(Collectors.toList());
+    }
+
+    private List<String> filtrar(List<String> opciones, String prefijo) {
+        return opciones.stream()
+                .filter(s -> s.startsWith(prefijo.toLowerCase()))
+                .collect(Collectors.toList());
     }
 }
